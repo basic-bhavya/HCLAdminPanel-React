@@ -242,7 +242,7 @@ class Charts extends Component {
             </CardHeader>
             <CardBody>
               <div className="chart-wrapper">
-                <Polar data={polar} options={options}/>
+                <Polar data={polar} options={options} />
               </div>
             </CardBody>
           </Card>
