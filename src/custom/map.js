@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Component } from 'react';
 import {
   GoogleMap,
   withScriptjs,
@@ -9,6 +9,7 @@ import {
 import * as Towers from './data/TowerLocs';
 import * as plots from './data/plots';
 import { Line } from 'react-chartjs-2';
+import DrawGraph from './DrawGraph';
 // import DrawGraph from './DrawGraph';
 
 // function makeMarker(props) {
@@ -33,24 +34,32 @@ const Map = () => {
         }}
 
         onClick={() => {
+          console.log(plots.labels.length);
+          
           setTower(tower);
+          // console.log("Clicked "+selTower.title);
+          // else console.log("Empty");
         }}
       />
     ))};
 
     {selTower && (
-      <InfoWindow
-        position={{ lat: selTower.coords.lat + 0.006, lng: selTower.coords.lng }}
-        onCloseClick={() => {
-          setTower(null);
-        }}
-      >
-        <div>
-          {selTower.title}
-        </div>
-      </InfoWindow>
+      <div>
+        <InfoWindow
+          position={{ lat: selTower.coords.lat + 0.006, lng: selTower.coords.lng }}
+          onCloseClick={() => {
+            setTower(null);
+          }}
+        >
+          <div>
+            {selTower.title}
+          </div>
+        </InfoWindow>
+      </div>
     )}
+
   </GoogleMap>
+
 }
 
 // export var PLOT = plot;
@@ -58,12 +67,24 @@ const Map = () => {
 
 const WrappedMap = withScriptjs(withGoogleMap(Map));
 
-export default function App() {
-  return <div style={{ width: "580px", height: "320px", position: "relative", overflow: "hidden" }}>
-    <WrappedMap googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo'}
-      loadingElement={<div style={{ height: "100%", width: "100%" }} />}
-      containerElement={<div style={{ height: "100%", width: "100%" }} />}
-      mapElement={<div style={{ height: "100%", width: "100%" }} />}
-    />
-  </div>
+// export default function App() {
+//   return <div style={{ width: "580px", height: "320px", position: "relative", overflow: "hidden" }}>
+//     <WrappedMap googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo'}
+//       loadingElement={<div style={{ height: "100%", width: "100%" }} />}
+//       containerElement={<div style={{ height: "100%", width: "100%" }} />}
+//       mapElement={<div style={{ height: "100%", width: "100%" }} />}
+//     />
+//   </div>
+// }
+
+export default class App extends Component {
+  render() {
+    return (<div style={{ width: "580px", height: "320px", position: "relative", overflow: "hidden" }}>
+      <WrappedMap googleMapURL={'https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo'}
+        loadingElement={<div style={{ height: "100%", width: "100%" }} />}
+        containerElement={<div style={{ height: "100%", width: "100%" }} />}
+        mapElement={<div style={{ height: "100%", width: "100%" }} />}
+      />
+    </div>)
+  }
 }

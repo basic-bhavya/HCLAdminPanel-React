@@ -7,8 +7,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+// import model from './custom/model'
+// import { StoreProvider, createStore } from 'easy-peasy';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// const store = createStore(model);
+
+ReactDOM.render(
+    <App />, document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

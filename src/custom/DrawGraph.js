@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bar, Line } from 'react-chartjs-2';
+import plots from './data/plots';
 
 var optns = {
     tooltips: {
@@ -51,10 +52,16 @@ var optns = {
     },
   };
 
-export default function DrawGraph(){
-    // var id = props.tower.id;
-    // var ChartHere = React.findDOMNode(this.refs.indiChart).value;
-    // console.log(ChartHere);
-    
-    // return <Line data={props.data} options={optns}/>
+const DrawGraph = ({towerID, name}) => {
+  var plotData;
+  if(towerID===1) plotData = plots.data1;
+  if(towerID===2) plotData = plots.data2;
+  if(towerID===3) plotData = plots.data3;
+  if(towerID===4) plotData = plots.data4;
+  console.log(plotData);
+  
+  return <Line data={plotData} options={optns} />
+  // return <p>Hello</p>
 }
+
+export default DrawGraph;

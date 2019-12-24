@@ -23,9 +23,14 @@ export default {
       url: '/theme/colors',
       icon: 'icon-drop',
     },
+    // {
+    //   name: 'Typography',
+    //   url: '/theme/typography',
+    //   icon: 'icon-pencil',
+    // },
     {
       name: 'Typography',
-      url: '/theme/typography',
+      url: '/FullMap',
       icon: 'icon-pencil',
     },
     {
@@ -35,11 +40,6 @@ export default {
         element: '',
         attributes: {},
       },
-    },
-    {
-      name: 'Map',
-      url: '/GMap',
-      icon: 'icon-map',
     },
     {
       name: 'Base',

@@ -22,8 +22,11 @@ import {
 } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
+import { CSVLink } from 'react-csv';
 import GMap from '../GMap';
 import { DrawGraph } from '../../custom/map';
+import { useStoreState } from 'easy-peasy';
+// import map from '../../custom/map'
 // import DrawGraph from '../../custom/DrawGraph';
 
 
@@ -397,7 +400,7 @@ const mainChart = {
       backgroundColor: hexToRgba(brandInfo, 10),
       borderColor: brandInfo,
       pointHoverBackgroundColor: '#fff',
-      borderWidth: 2,
+      borderWidth: 3,
       data: plots.plot1y,
     },
     {
@@ -405,7 +408,7 @@ const mainChart = {
       backgroundColor: 'transparent',
       borderColor: brandSuccess,
       pointHoverBackgroundColor: '#fff',
-      borderWidth: 2,
+      borderWidth: 3,
       data: plots.plot2y,
     },
     {
@@ -413,9 +416,18 @@ const mainChart = {
       backgroundColor: 'transparent',
       borderColor: brandDanger,
       pointHoverBackgroundColor: '#fff',
-      borderWidth: 1,
+      borderWidth: 3,
       // borderDash: [8, 5],
       data: plots.plot3y,
+    },
+    {
+      label: 'Tower C',
+      backgroundColor: 'transparent',
+      borderColor: brandWarning,
+      pointHoverBackgroundColor: '#fff',
+      borderWidth: 3,
+      // borderDash: [8, 5],
+      data: plots.plot4y,
     },
   ],
 };
@@ -433,6 +445,9 @@ const mainChartOpts = {
       }
     }
   },
+  axisX: {
+    interval: 1000
+  },
   maintainAspectRatio: false,
   legend: {
     display: false,
@@ -440,18 +455,27 @@ const mainChartOpts = {
   scales: {
     xAxes: [
       {
+        scaleLabel: {
+          display: true,
+          labelString: 'Time (24hr format)'
+        },
         gridLines: {
           drawOnChartArea: false,
         },
         ticks: {
+
           callback: function (value, index, values) {
             return value + "AM";
-
           }
         }
       }],
     yAxes: [
       {
+        scaleLabel: {
+          display: true,
+          labelString: 'Bandwidth (TB/s)'
+        },
+        // {
         // ticks: {
         //   beginAtZero: true,
         //   maxTicksLimit: 5,
@@ -469,6 +493,18 @@ const mainChartOpts = {
     },
   },
 };
+
+//CSV DATA VARIABLE
+var csvData = [plots.plot1y.map(String), plots.plot2y.map(String), plots.plot3y.map(String), plots.plot4y.map(String)]
+
+
+//INDIVIDUAL TOWER CHART FUNCTION
+function TowerChart() {
+  const count = useStoreState(state => state.towers.length);
+  console.log("Total towers: " + count);
+  return <div>{count} Total Towers</div>;
+}
+
 
 class Dashboard extends Component {
   constructor(props) {
@@ -608,7 +644,7 @@ class Dashboard extends Component {
               <CardBody>
                 <div className="embed-responsive embed-responsive-16by9">
                   <div className="embed-responsive-item">
-                    <GMap />
+                    <GMap tCallback={this.towerCallback} />
                   </div>
                 </div>
               </CardBody>
@@ -620,9 +656,9 @@ class Dashboard extends Component {
                 Line graph
             </CardHeader>
               <CardBody>
-                <div className="chart-wrapper" ref="indiChart">
-                  Hello
-              </div>
+                <div className="chart-wrapper">
+                  <TowerChart />
+                </div>
               </CardBody>
             </Card>
           </Col>
@@ -634,57 +670,57 @@ class Dashboard extends Component {
                 <Row>
                   <Col sm="5">
                     <CardTitle className="mb-0">Traffic</CardTitle>
-                    <div className="small text-muted">November 2015</div>
+                    <div className="small text-muted">December 2019</div>
                   </Col>
                   <Col sm="7" className="d-none d-sm-inline-block">
-                    <Button color="primary" className="float-right"><i className="icon-cloud-download"></i></Button>
+    <Button color="primary" className="float-right"><i className="icon-cloud-download" onClick={<CSVLink data={csvData}/>}></i></Button>
                     <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
                       <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected === 1}>Day</Button>
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected === 2}>Month</Button>
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected === 3}>Year</Button>
-                      </ButtonGroup>
+                      <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected === 1}>Day</Button>
+                      <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected === 2}>Month</Button>
+                      <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected === 3}>Year</Button>
+                    </ButtonGroup>
                     </ButtonToolbar>
                   </Col>
                 </Row>
-                <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 40 + 'px' }}>
-                  <Line data={mainChart} options={mainChartOpts} height={300} />
-                </div>
+              <div className="chart-wrapper" style={{ height: 300 + 'px', marginTop: 40 + 'px' }}>
+                <Line data={mainChart} options={mainChartOpts} height={300} />
+              </div>
               </CardBody>
-              <CardFooter>
-                <Row className="text-center">
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Visits</div>
-                    <strong>29.703 Users (40%)</strong>
-                    <Progress className="progress-xs mt-2" color="success" value="40" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Unique</div>
-                    <strong>24.093 Users (20%)</strong>
-                    <Progress className="progress-xs mt-2" color="info" value="20" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">Pageviews</div>
-                    <strong>78.706 Views (60%)</strong>
-                    <Progress className="progress-xs mt-2" color="warning" value="60" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0">
-                    <div className="text-muted">New Users</div>
-                    <strong>22.123 Users (80%)</strong>
-                    <Progress className="progress-xs mt-2" color="danger" value="80" />
-                  </Col>
-                  <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
-                    <div className="text-muted">Bounce Rate</div>
-                    <strong>Average Rate (40.15%)</strong>
-                    <Progress className="progress-xs mt-2" color="primary" value="40" />
-                  </Col>
-                </Row>
-              </CardFooter>
+            <CardFooter>
+              <Row className="text-center">
+                <Col sm={12} md className="mb-sm-2 mb-0">
+                  <div className="text-muted">Visits</div>
+                  <strong>29.703 Users (40%)</strong>
+                  <Progress className="progress-xs mt-2" color="success" value="40" />
+                </Col>
+                <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                  <div className="text-muted">Unique</div>
+                  <strong>24.093 Users (20%)</strong>
+                  <Progress className="progress-xs mt-2" color="info" value="20" />
+                </Col>
+                <Col sm={12} md className="mb-sm-2 mb-0">
+                  <div className="text-muted">Pageviews</div>
+                  <strong>78.706 Views (60%)</strong>
+                  <Progress className="progress-xs mt-2" color="warning" value="60" />
+                </Col>
+                <Col sm={12} md className="mb-sm-2 mb-0">
+                  <div className="text-muted">New Users</div>
+                  <strong>22.123 Users (80%)</strong>
+                  <Progress className="progress-xs mt-2" color="danger" value="80" />
+                </Col>
+                <Col sm={12} md className="mb-sm-2 mb-0 d-md-down-none">
+                  <div className="text-muted">Bounce Rate</div>
+                  <strong>Average Rate (40.15%)</strong>
+                  <Progress className="progress-xs mt-2" color="primary" value="40" />
+                </Col>
+              </Row>
+            </CardFooter>
             </Card>
           </Col>
         </Row>
 
-        <Row>
+        {/* <Row>
           <Col xs="6" sm="6" lg="3">
             <Suspense fallback={this.loading()}>
               <Widget03 dataBox={() => ({ variant: 'facebook', friends: '89k', feeds: '459' })} >
@@ -724,450 +760,450 @@ class Dashboard extends Component {
               </Widget03>
             </Suspense>
           </Col>
-        </Row>
+        </Row> */}
 
-        <Row>
-          <Col>
-            <Card>
-              <CardHeader>
-                Traffic {' & '} Sales
+    <Row>
+      <Col>
+        <Card>
+          <CardHeader>
+            Traffic {' & '} Sales
               </CardHeader>
-              <CardBody>
+          <CardBody>
+            <Row>
+              <Col xs="12" md="6" xl="6">
                 <Row>
-                  <Col xs="12" md="6" xl="6">
-                    <Row>
-                      <Col sm="6">
-                        <div className="callout callout-info">
-                          <small className="text-muted">New Clients</small>
-                          <br />
-                          <strong className="h4">9,123</strong>
-                          <div className="chart-wrapper">
-                            <Line data={makeSparkLineData(0, brandPrimary)} options={sparklineChartOpts} width={100} height={30} />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm="6">
-                        <div className="callout callout-danger">
-                          <small className="text-muted">Recurring Clients</small>
-                          <br />
-                          <strong className="h4">22,643</strong>
-                          <div className="chart-wrapper">
-                            <Line data={makeSparkLineData(1, brandDanger)} options={sparklineChartOpts} width={100} height={30} />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                    <hr className="mt-0" />
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Monday
-                        </span>
+                  <Col sm="6">
+                    <div className="callout callout-info">
+                      <small className="text-muted">New Clients</small>
+                      <br />
+                      <strong className="h4">9,123</strong>
+                      <div className="chart-wrapper">
+                        <Line data={makeSparkLineData(0, brandPrimary)} options={sparklineChartOpts} width={100} height={30} />
                       </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="34" />
-                        <Progress className="progress-xs" color="danger" value="78" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Tuesday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="56" />
-                        <Progress className="progress-xs" color="danger" value="94" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Wednesday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="12" />
-                        <Progress className="progress-xs" color="danger" value="67" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Thursday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="43" />
-                        <Progress className="progress-xs" color="danger" value="91" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Friday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="22" />
-                        <Progress className="progress-xs" color="danger" value="73" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Saturday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="53" />
-                        <Progress className="progress-xs" color="danger" value="82" />
-                      </div>
-                    </div>
-                    <div className="progress-group mb-4">
-                      <div className="progress-group-prepend">
-                        <span className="progress-group-text">
-                          Sunday
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <Progress className="progress-xs" color="info" value="9" />
-                        <Progress className="progress-xs" color="danger" value="69" />
-                      </div>
-                    </div>
-                    <div className="legend text-center">
-                      <small>
-                        <sup className="px-1"><Badge pill color="info">&nbsp;</Badge></sup>
-                        New clients
-                        &nbsp;
-                        <sup className="px-1"><Badge pill color="danger">&nbsp;</Badge></sup>
-                        Recurring clients
-                      </small>
                     </div>
                   </Col>
-                  <Col xs="12" md="6" xl="6">
-                    <Row>
-                      <Col sm="6">
-                        <div className="callout callout-warning">
-                          <small className="text-muted">Pageviews</small>
-                          <br />
-                          <strong className="h4">78,623</strong>
-                          <div className="chart-wrapper">
-                            <Line data={makeSparkLineData(2, brandWarning)} options={sparklineChartOpts} width={100} height={30} />
-                          </div>
-                        </div>
-                      </Col>
-                      <Col sm="6">
-                        <div className="callout callout-success">
-                          <small className="text-muted">Organic</small>
-                          <br />
-                          <strong className="h4">49,123</strong>
-                          <div className="chart-wrapper">
-                            <Line data={makeSparkLineData(3, brandSuccess)} options={sparklineChartOpts} width={100} height={30} />
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                    <hr className="mt-0" />
-                    <ul>
-                      <div className="progress-group">
-                        <div className="progress-group-header">
-                          <i className="icon-user progress-group-icon"></i>
-                          <span className="title">Male</span>
-                          <span className="ml-auto font-weight-bold">43%</span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="warning" value="43" />
-                        </div>
+                  <Col sm="6">
+                    <div className="callout callout-danger">
+                      <small className="text-muted">Recurring Clients</small>
+                      <br />
+                      <strong className="h4">22,643</strong>
+                      <div className="chart-wrapper">
+                        <Line data={makeSparkLineData(1, brandDanger)} options={sparklineChartOpts} width={100} height={30} />
                       </div>
-                      <div className="progress-group mb-5">
-                        <div className="progress-group-header">
-                          <i className="icon-user-female progress-group-icon"></i>
-                          <span className="title">Female</span>
-                          <span className="ml-auto font-weight-bold">37%</span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="warning" value="37" />
-                        </div>
-                      </div>
-                      <div className="progress-group">
-                        <div className="progress-group-header">
-                          <i className="icon-globe progress-group-icon"></i>
-                          <span className="title">Organic Search</span>
-                          <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="success" value="56" />
-                        </div>
-                      </div>
-                      <div className="progress-group">
-                        <div className="progress-group-header">
-                          <i className="icon-social-facebook progress-group-icon"></i>
-                          <span className="title">Facebook</span>
-                          <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="success" value="15" />
-                        </div>
-                      </div>
-                      <div className="progress-group">
-                        <div className="progress-group-header">
-                          <i className="icon-social-twitter progress-group-icon"></i>
-                          <span className="title">Twitter</span>
-                          <span className="ml-auto font-weight-bold">37,564 <span className="text-muted small">(11%)</span></span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="success" value="11" />
-                        </div>
-                      </div>
-                      <div className="progress-group">
-                        <div className="progress-group-header">
-                          <i className="icon-social-linkedin progress-group-icon"></i>
-                          <span className="title">LinkedIn</span>
-                          <span className="ml-auto font-weight-bold">27,319 <span className="text-muted small">(8%)</span></span>
-                        </div>
-                        <div className="progress-group-bars">
-                          <Progress className="progress-xs" color="success" value="8" />
-                        </div>
-                      </div>
-                      <div className="divider text-center">
-                        <Button color="link" size="sm" className="text-muted" data-toggle="tooltip" data-placement="top"
-                          title="" data-original-title="show more"><i className="icon-options"></i></Button>
-                      </div>
-                    </ul>
+                    </div>
                   </Col>
                 </Row>
-                <br />
-                <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
-                  <thead className="thead-light">
-                    <tr>
-                      <th className="text-center"><i className="icon-people"></i></th>
-                      <th>User</th>
-                      <th className="text-center">Country</th>
-                      <th>Usage</th>
-                      <th className="text-center">Payment Method</th>
-                      <th>Activity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-success"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Yiorgos Avraamu</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
+                <hr className="mt-0" />
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Monday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="34" />
+                    <Progress className="progress-xs" color="danger" value="78" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Tuesday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="56" />
+                    <Progress className="progress-xs" color="danger" value="94" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Wednesday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="12" />
+                    <Progress className="progress-xs" color="danger" value="67" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Thursday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="43" />
+                    <Progress className="progress-xs" color="danger" value="91" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Friday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="22" />
+                    <Progress className="progress-xs" color="danger" value="73" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Saturday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="53" />
+                    <Progress className="progress-xs" color="danger" value="82" />
+                  </div>
+                </div>
+                <div className="progress-group mb-4">
+                  <div className="progress-group-prepend">
+                    <span className="progress-group-text">
+                      Sunday
+                        </span>
+                  </div>
+                  <div className="progress-group-bars">
+                    <Progress className="progress-xs" color="info" value="9" />
+                    <Progress className="progress-xs" color="danger" value="69" />
+                  </div>
+                </div>
+                <div className="legend text-center">
+                  <small>
+                    <sup className="px-1"><Badge pill color="info">&nbsp;</Badge></sup>
+                    New clients
+                    &nbsp;
+                        <sup className="px-1"><Badge pill color="danger">&nbsp;</Badge></sup>
+                    Recurring clients
+                      </small>
+                </div>
+              </Col>
+              <Col xs="12" md="6" xl="6">
+                <Row>
+                  <Col sm="6">
+                    <div className="callout callout-warning">
+                      <small className="text-muted">Pageviews</small>
+                      <br />
+                      <strong className="h4">78,623</strong>
+                      <div className="chart-wrapper">
+                        <Line data={makeSparkLineData(2, brandWarning)} options={sparklineChartOpts} width={100} height={30} />
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-us h4 mb-0" title="us" id="us"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>50%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="success" value="50" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-mastercard" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>10 sec ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/2.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-danger"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Avram Tarasios</div>
-                        <div className="small text-muted">
+                    </div>
+                  </Col>
+                  <Col sm="6">
+                    <div className="callout callout-success">
+                      <small className="text-muted">Organic</small>
+                      <br />
+                      <strong className="h4">49,123</strong>
+                      <div className="chart-wrapper">
+                        <Line data={makeSparkLineData(3, brandSuccess)} options={sparklineChartOpts} width={100} height={30} />
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <hr className="mt-0" />
+                <ul>
+                  <div className="progress-group">
+                    <div className="progress-group-header">
+                      <i className="icon-user progress-group-icon"></i>
+                      <span className="title">Male</span>
+                      <span className="ml-auto font-weight-bold">43%</span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="warning" value="43" />
+                    </div>
+                  </div>
+                  <div className="progress-group mb-5">
+                    <div className="progress-group-header">
+                      <i className="icon-user-female progress-group-icon"></i>
+                      <span className="title">Female</span>
+                      <span className="ml-auto font-weight-bold">37%</span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="warning" value="37" />
+                    </div>
+                  </div>
+                  <div className="progress-group">
+                    <div className="progress-group-header">
+                      <i className="icon-globe progress-group-icon"></i>
+                      <span className="title">Organic Search</span>
+                      <span className="ml-auto font-weight-bold">191,235 <span className="text-muted small">(56%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="success" value="56" />
+                    </div>
+                  </div>
+                  <div className="progress-group">
+                    <div className="progress-group-header">
+                      <i className="icon-social-facebook progress-group-icon"></i>
+                      <span className="title">Facebook</span>
+                      <span className="ml-auto font-weight-bold">51,223 <span className="text-muted small">(15%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="success" value="15" />
+                    </div>
+                  </div>
+                  <div className="progress-group">
+                    <div className="progress-group-header">
+                      <i className="icon-social-twitter progress-group-icon"></i>
+                      <span className="title">Twitter</span>
+                      <span className="ml-auto font-weight-bold">37,564 <span className="text-muted small">(11%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="success" value="11" />
+                    </div>
+                  </div>
+                  <div className="progress-group">
+                    <div className="progress-group-header">
+                      <i className="icon-social-linkedin progress-group-icon"></i>
+                      <span className="title">LinkedIn</span>
+                      <span className="ml-auto font-weight-bold">27,319 <span className="text-muted small">(8%)</span></span>
+                    </div>
+                    <div className="progress-group-bars">
+                      <Progress className="progress-xs" color="success" value="8" />
+                    </div>
+                  </div>
+                  <div className="divider text-center">
+                    <Button color="link" size="sm" className="text-muted" data-toggle="tooltip" data-placement="top"
+                      title="" data-original-title="show more"><i className="icon-options"></i></Button>
+                  </div>
+                </ul>
+              </Col>
+            </Row>
+            <br />
+            <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
+              <thead className="thead-light">
+                <tr>
+                  <th className="text-center"><i className="icon-people"></i></th>
+                  <th>User</th>
+                  <th className="text-center">Country</th>
+                  <th>Usage</th>
+                  <th className="text-center">Payment Method</th>
+                  <th>Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-success"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Yiorgos Avraamu</div>
+                    <div className="small text-muted">
+                      <span>New</span> | Registered: Jan 1, 2015
+                      </div>
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-us h4 mb-0" title="us" id="us"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>50%</strong>
+                      </div>
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                      </div>
+                    </div>
+                    <Progress className="progress-xs" color="success" value="50" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-cc-mastercard" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>10 sec ago</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/2.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-danger"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Avram Tarasios</div>
+                    <div className="small text-muted">
 
-                          <span>Recurring</span> | Registered: Jan 1, 2015
+                      <span>Recurring</span> | Registered: Jan 1, 2015
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-br h4 mb-0" title="br" id="br"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>10%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="info" value="10" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-visa" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>5 minutes ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/3.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-warning"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Quintin Ed</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-br h4 mb-0" title="br" id="br"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>10%</strong>
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-in h4 mb-0" title="in" id="in"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>74%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="warning" value="74" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-stripe" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>1 hour ago</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-secondary"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Enéas Kwadwo</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-fr h4 mb-0" title="fr" id="fr"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>98%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="danger" value="98" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-paypal" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Last month</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-success"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Agapetus Tadeáš</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
+                    </div>
+                    <Progress className="progress-xs" color="info" value="10" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-cc-visa" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>5 minutes ago</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/3.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-warning"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Quintin Ed</div>
+                    <div className="small text-muted">
+                      <span>New</span> | Registered: Jan 1, 2015
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-es h4 mb-0" title="es" id="es"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>22%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="info" value="22" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-google-wallet" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Last week</strong>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="text-center">
-                        <div className="avatar">
-                          <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                          <span className="avatar-status badge-danger"></span>
-                        </div>
-                      </td>
-                      <td>
-                        <div>Friderik Dávid</div>
-                        <div className="small text-muted">
-                          <span>New</span> | Registered: Jan 1, 2015
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-in h4 mb-0" title="in" id="in"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>74%</strong>
                       </div>
-                      </td>
-                      <td className="text-center">
-                        <i className="flag-icon flag-icon-pl h4 mb-0" title="pl" id="pl"></i>
-                      </td>
-                      <td>
-                        <div className="clearfix">
-                          <div className="float-left">
-                            <strong>43%</strong>
-                          </div>
-                          <div className="float-right">
-                            <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                          </div>
-                        </div>
-                        <Progress className="progress-xs" color="success" value="43" />
-                      </td>
-                      <td className="text-center">
-                        <i className="fa fa-cc-amex" style={{ fontSize: 24 + 'px' }}></i>
-                      </td>
-                      <td>
-                        <div className="small text-muted">Last login</div>
-                        <strong>Yesterday</strong>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                      </div>
+                    </div>
+                    <Progress className="progress-xs" color="warning" value="74" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-cc-stripe" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>1 hour ago</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-secondary"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Enéas Kwadwo</div>
+                    <div className="small text-muted">
+                      <span>New</span> | Registered: Jan 1, 2015
+                      </div>
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-fr h4 mb-0" title="fr" id="fr"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>98%</strong>
+                      </div>
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                      </div>
+                    </div>
+                    <Progress className="progress-xs" color="danger" value="98" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-paypal" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>Last month</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-success"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Agapetus Tadeáš</div>
+                    <div className="small text-muted">
+                      <span>New</span> | Registered: Jan 1, 2015
+                      </div>
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-es h4 mb-0" title="es" id="es"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>22%</strong>
+                      </div>
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                      </div>
+                    </div>
+                    <Progress className="progress-xs" color="info" value="22" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-google-wallet" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>Last week</strong>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-center">
+                    <div className="avatar">
+                      <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                      <span className="avatar-status badge-danger"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div>Friderik Dávid</div>
+                    <div className="small text-muted">
+                      <span>New</span> | Registered: Jan 1, 2015
+                      </div>
+                  </td>
+                  <td className="text-center">
+                    <i className="flag-icon flag-icon-pl h4 mb-0" title="pl" id="pl"></i>
+                  </td>
+                  <td>
+                    <div className="clearfix">
+                      <div className="float-left">
+                        <strong>43%</strong>
+                      </div>
+                      <div className="float-right">
+                        <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
+                      </div>
+                    </div>
+                    <Progress className="progress-xs" color="success" value="43" />
+                  </td>
+                  <td className="text-center">
+                    <i className="fa fa-cc-amex" style={{ fontSize: 24 + 'px' }}></i>
+                  </td>
+                  <td>
+                    <div className="small text-muted">Last login</div>
+                    <strong>Yesterday</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </CardBody>
+        </Card>
+      </Col>
+    </Row>
+      </div >
     );
   }
 }

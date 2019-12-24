@@ -1,0 +1,6 @@
+{
+  "name": "FullMap",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./FullMap.js"
+}

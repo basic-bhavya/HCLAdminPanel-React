@@ -55,7 +55,7 @@ var labels = ["0000", 1001., 1002., 1003., 1004., 1005., 1006., 1007., 1008.,
   1450., 1451., 1452., 1453., 1454., 1455., 1456., 1457., 1458.,
   1459., 1460.]
 
-  exports.labels = labels;
+exports.labels = labels;
 
 var plot2x = [1000., 1001., 1002., 1003., 1004., 1005., 1006., 1007., 1008.,
   1009., 1010., 1011., 1012., 1013., 1014., 1015., 1016., 1017.,
@@ -571,8 +571,69 @@ var plot1a = [32.7341136932373, 32.6104513804117, 31.4329566955566, 31.500226338
   38.6294212341308, 37.607255299886, 36.5070457458496, 37.541035970052, 37.7997182210286, 40.3290926615397, 41.0722071329752, 40.7121696472167, 41.3408241271972, 41.643616994222,
   44.7109731038411, 43.2056605021158, 40.5473384857177, 38.0933221181233, 37.8580277760823, 41.9359601338704, 41.8397254943847, 47.4923718770345,];
 
-  exports.plot1y = plot1y;
-  exports.plot2y = plot2y;
-  exports.plot3y = plot3y;
-  exports.plot4y = plot4y;
-  exports.plot1a = plot1a;
+var data1 = {
+  labels: labels,
+  datasets: [{
+    label: 'Tower A',
+    backgroundColor: '#2153af',
+    borderColor: '#2153af',
+    pointHoverBackgroundColor: '#fff',
+    borderWidth: 2,
+    data: plot1y,
+  },
+  ],
+};
+
+var data2 = {
+  labels: labels,
+  datasets: [{
+    label: 'Tower A',
+    backgroundColor: '#c9ef0b',
+    borderColor: '#c9ef0b',
+    pointHoverBackgroundColor: '#fff',
+    borderWidth: 2,
+    data: plot2y,
+  },
+  ],
+};
+
+var data3 = {
+  labels: labels,
+  datasets: [{
+    label: 'Tower A',
+    backgroundColor: '#b5102e',
+    borderColor: '#b5102e',
+    pointHoverBackgroundColor: '#fff',
+    borderWidth: 2,
+    data: plot3y,
+  },
+  ],
+};
+
+var data4 = {
+  labels: labels,
+  datasets: [{
+    label: 'Tower A',
+    backgroundColor: '#159640',
+    borderColor: '#159640',
+    pointHoverBackgroundColor: '#fff',
+    borderWidth: 2,
+    data: plot4y,
+  },
+  ],
+};
+
+exports.data1 = data1;
+exports.data2 = data2;
+exports.data3 = data3;
+exports.data4 = data4;
+exports.plot1a = plot1a;
+
+exports.plot1y = plot1y;
+exports.plot2y = plot2y;
+exports.plot3y = plot3y;
+exports.plot4y = plot4y;
+
+
+
+
