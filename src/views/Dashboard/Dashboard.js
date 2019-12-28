@@ -24,8 +24,8 @@ import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
 import { CSVLink } from 'react-csv';
 import GMap from '../GMap';
-import { DrawGraph } from '../../custom/map';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState,useStoreActions } from 'easy-peasy';
+import DrawGraph from '../../custom/DrawGraph';
 // import map from '../../custom/map'
 // import DrawGraph from '../../custom/DrawGraph';
 
@@ -499,11 +499,7 @@ var csvData = [plots.plot1y.map(String), plots.plot2y.map(String), plots.plot3y.
 
 
 //INDIVIDUAL TOWER CHART FUNCTION
-function TowerChart() {
-  const count = useStoreState(state => state.towers.length);
-  console.log("Total towers: " + count);
-  return <div>{count} Total Towers</div>;
-}
+
 
 
 class Dashboard extends Component {
@@ -644,7 +640,7 @@ class Dashboard extends Component {
               <CardBody>
                 <div className="embed-responsive embed-responsive-16by9">
                   <div className="embed-responsive-item">
-                    <GMap tCallback={this.towerCallback} />
+                    <GMap />
                   </div>
                 </div>
               </CardBody>
@@ -657,7 +653,7 @@ class Dashboard extends Component {
             </CardHeader>
               <CardBody>
                 <div className="chart-wrapper">
-                  <TowerChart />
+                  <DrawGraph />
                 </div>
               </CardBody>
             </Card>

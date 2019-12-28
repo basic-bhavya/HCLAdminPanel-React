@@ -629,6 +629,9 @@ exports.data3 = data3;
 exports.data4 = data4;
 exports.plot1a = plot1a;
 
+const dataArr = [data1,data2,data3,data4];
+exports.dataArr = dataArr;
+
 exports.plot1y = plot1y;
 exports.plot2y = plot2y;
 exports.plot3y = plot3y;

@@ -8,8 +8,7 @@ import {
 } from 'react-google-maps';
 import * as Towers from './data/TowerLocs';
 import * as plots from './data/plots';
-import { Line } from 'react-chartjs-2';
-import DrawGraph from './DrawGraph';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 // import DrawGraph from './DrawGraph';
 
 // function makeMarker(props) {
@@ -17,8 +16,10 @@ import DrawGraph from './DrawGraph';
 // }
 
 const Map = () => {
-  var id = 0;
-  const [selTower, setTower] = useState(Towers.TowerList[0]);
+  const selTower = useStoreState(state=>state.towers.selected);
+  const setTower = useStoreActions(action => action.towers.setTower);
+  
+  // const [selTower, setTower] = useState(Towers.TowerList[0]);
 
   return <GoogleMap
     defaultZoom={13}
@@ -35,7 +36,7 @@ const Map = () => {
 
         onClick={() => {
           console.log(plots.labels.length);
-          
+
           setTower(tower);
           // console.log("Clicked "+selTower.title);
           // else console.log("Empty");
