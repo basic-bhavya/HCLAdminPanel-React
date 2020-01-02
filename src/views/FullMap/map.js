@@ -6,10 +6,10 @@ import {
   Marker,
   InfoWindow
 } from 'react-google-maps';
-import * as Towers from './data/TowerLocs';
-import * as plots from './data/plots';
+import * as Towers from '../../custom/data/TowerLocs';
+import * as plots from '../../custom/data/plots';
 import { Line } from 'react-chartjs-2';
-import DrawGraph from './DrawGraph';
+// import DrawGraph from './DrawGraph';
 // import DrawGraph from './DrawGraph';
 
 // function makeMarker(props) {
@@ -53,10 +53,10 @@ const Map = () => {
           {selTower.title}
         </div>
       </InfoWindow>
-      <DrawGraph 
+      {/* <DrawGraph 
         towerID={selTower.id}
         name={selTower.title}
-      />
+      /> */}
       </div>
     )}
   </GoogleMap>

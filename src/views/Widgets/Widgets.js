@@ -6,7 +6,6 @@ import Widget03 from './Widget03';
 import Widget04 from './Widget04';
 import { Line } from 'react-chartjs-2';
 
-
 // Brand Card Chart
 const makeSocialBoxData = (dataSetNo) => {
   const socialBoxData = [

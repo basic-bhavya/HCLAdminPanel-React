@@ -17,6 +17,7 @@ import { useStoreState, useStoreActions } from 'easy-peasy';
 
 const Map = () => {
   const selTower = useStoreState(state=>state.towers.selected);
+  // const all = useStoreState(state=>state.towers.TowerList);
   const setTower = useStoreActions(action => action.towers.setTower);
   
   // const [selTower, setTower] = useState(Towers.TowerList[0]);
@@ -35,11 +36,7 @@ const Map = () => {
         }}
 
         onClick={() => {
-          console.log(plots.labels.length);
-
           setTower(tower);
-          // console.log("Clicked "+selTower.title);
-          // else console.log("Empty");
         }}
       />
     ))};
@@ -48,9 +45,9 @@ const Map = () => {
       <div>
         <InfoWindow
           position={{ lat: selTower.coords.lat + 0.006, lng: selTower.coords.lng }}
-          onCloseClick={() => {
-            setTower(null);
-          }}
+          onCloseClick={() =>
+            setTower(null)
+          }
         >
           <div>
             {selTower.title}

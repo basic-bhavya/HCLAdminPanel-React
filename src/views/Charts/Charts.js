@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { Card, CardBody, CardColumns, CardHeader } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { useStoreState } from 'easy-peasy';
 
 const line = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -115,34 +116,6 @@ const pie = {
     }],
 };
 
-const polar = {
-  datasets: [
-    {
-      data: [
-        11,
-        16,
-        7,
-        3,
-        14,
-      ],
-      backgroundColor: [
-        '#FF6384',
-        '#4BC0C0',
-        '#FFCE56',
-        '#E7E9ED',
-        '#36A2EB',
-      ],
-      label: 'My dataset' // for legend
-    }],
-  labels: [
-    'Red',
-    'Green',
-    'Yellow',
-    'Grey',
-    'Blue',
-  ],
-};
-
 const options = {
   tooltips: {
     enabled: false,
@@ -151,8 +124,41 @@ const options = {
   maintainAspectRatio: false
 }
 
-class Charts extends Component {
-  render() {
+// class Charts extends Component {
+export default function Charts(){
+
+  const TowerList = useStoreState(state=>state.towers.towerList);
+
+const polar = {
+  datasets: [
+    {
+      data: [
+        11,
+        16,
+        7,
+        33,
+        // 14,
+      ],
+      backgroundColor: [
+        '#FF6384',
+        '#4BC0C0',
+        '#FFCE56',
+        '#E7E9ED',
+        // '#36A2EB',
+      ],
+      label: 'My dataset' // for legend
+    }],
+  // labels: [
+  //   'Red',
+  //   'Green',
+  //   'Yellow',
+  //   'Grey',
+  //   'Blue',
+  // ],
+  labels: TowerList.map(tower=>tower.title),
+};
+
+  // render() {
     return (
       <div className="animated fadeIn">
         <CardColumns className="cols-2">
@@ -250,6 +256,6 @@ class Charts extends Component {
       </div>
     );
   }
-}
+// }
 
-export default Charts;
+// export default Charts;

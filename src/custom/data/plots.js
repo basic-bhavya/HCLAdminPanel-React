@@ -574,8 +574,8 @@ var plot1a = [32.7341136932373, 32.6104513804117, 31.4329566955566, 31.500226338
 var data1 = {
   labels: labels,
   datasets: [{
-    label: 'Tower A',
-    backgroundColor: '#2153af',
+    label: 'Bandwidth',
+    backgroundColor: 'rgba(0,255,0,0.1)',
     borderColor: '#2153af',
     pointHoverBackgroundColor: '#fff',
     borderWidth: 2,
@@ -587,8 +587,8 @@ var data1 = {
 var data2 = {
   labels: labels,
   datasets: [{
-    label: 'Tower A',
-    backgroundColor: '#c9ef0b',
+    label: 'Bandwidth',
+    backgroundColor: 'rgba(255,255,0,0.1)',
     borderColor: '#c9ef0b',
     pointHoverBackgroundColor: '#fff',
     borderWidth: 2,
@@ -600,8 +600,8 @@ var data2 = {
 var data3 = {
   labels: labels,
   datasets: [{
-    label: 'Tower A',
-    backgroundColor: '#b5102e',
+    label: 'Bandwidth',
+    backgroundColor: '',
     borderColor: '#b5102e',
     pointHoverBackgroundColor: '#fff',
     borderWidth: 2,
@@ -613,8 +613,8 @@ var data3 = {
 var data4 = {
   labels: labels,
   datasets: [{
-    label: 'Tower A',
-    backgroundColor: '#159640',
+    label: 'Bandwidth',
+    backgroundColor: 'rgba(0,255,0,0.1)',
     borderColor: '#159640',
     pointHoverBackgroundColor: '#fff',
     borderWidth: 2,
