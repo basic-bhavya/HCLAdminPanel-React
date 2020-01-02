@@ -1,27 +1,80 @@
 import React, { useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import plots from './data/plots';
+import Fileplots from './data/plots';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 
-const DrawGraph = ({height}) => {
+const DrawGraph = ({ height }) => {
 
   const selTowerID = useStoreState(state => state.towers.selected.id);
-  const plotData = useStoreState(state => state.plots.selected);
+  // const plotData = useStoreState(state => state.plots.selected);
+  const predicted = useStoreState(state => state.plots.selected.predicted);
+  const actual = useStoreState(state => state.plots.selected.actual);
+  const diff = useStoreState(state => state.plots.selected.diff);
+
+  const selected = useStoreState(state => state.selected);
+  const setThis = useStoreActions(action => action.setThis);
+
   const plots = useStoreState(state => state.plots.allData);
   const name = useStoreState(state => state.towers.selected.title);
-  
   //TEST
-  const testData = useStoreState(state=>state.plots.testData);
+  const testData = useStoreState(state => state.plots.testData);
   // const setTestData = useStoreActions(action=>action.plots.setTestData);
-  const fetchTest = useStoreActions(action=>action.fetchTest);
-
+  const fetchTest = useStoreActions(action => action.fetchTest);
+  const data = useStoreState(state=>state.data);
   const setData = useStoreActions(action => action.plots.setData);
 
-  useEffect(()=>{
+  console.log('=========BEFORE EFFECT======');
+  console.log(selected);
+  // console.log(actual);
+  // console.log(diff);
+  console.log('====================================');
+
+  useEffect(() => {
     fetchTest();
+    data.map(d=>{
+      if(selTowerID === d.id){
+        setThis(d);
+      }
+    });
     //eslint-disable-next-line
-  }, []);
+  }, [selTowerID]);
+
+  console.log('============AFTER EFFECT==========');
+  console.log(data);
+  // console.log(actual);
+  // console.log(diff);
+  console.log('====================================');
+
+  var plotData = {
+    labels: Fileplots.labels,
+    datasets: [
+      {
+        label: 'Predicted',
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(0,255,0)',
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: selected[0],
+      },
+      {
+        label: 'Actual',
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(255,0,0)',
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: selected[1],
+      },
+      {
+        label: 'Difference',
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(0,0,255)',
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: selected[2],
+      },
+    ],
+  }
 
   var optns = {
     responsive: true,
@@ -64,7 +117,7 @@ const DrawGraph = ({height}) => {
                 var front = value.toString().substring(0, 2);
                 var end = "AM";
               } else {
-                var front = ((value/100).toPrecision(2)-12).toString().substring(0, 2);
+                var front = ((value / 100).toPrecision(2) - 12).toString().substring(0, 2);
                 var end = "PM";
               }
               var back = value.toString().substring(2, 4);
@@ -105,7 +158,7 @@ const DrawGraph = ({height}) => {
     },
   };
 
-  setData(plots[selTowerID - 1]);
+  // setData(plots[selTowerID - 1]);
   // if (selTowerID === 1) setData(plots[0]);
   // else if (selTowerID === 2) setData(plots[1]);
   // else if (selTowerID === 3) setData(plots[2]);
