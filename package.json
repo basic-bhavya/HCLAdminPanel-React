@@ -18,8 +18,10 @@
     "@coreui/react": "^2.5.1",
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
+    "chartjs-plugin-streaming": "^1.8.0",
     "classnames": "^2.2.6",
     "core-js": "^3.1.4",
+    "easy-peasy": "^3.2.6",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "flag-icon-css": "^3.3.0",
@@ -30,6 +32,7 @@
     "react": "^16.8.6",
     "react-app-polyfill": "^1.0.1",
     "react-chartjs-2": "^2.7.6",
+    "react-csv": "^1.1.2",
     "react-dom": "^16.8.6",
     "react-google-maps": "^9.4.5",
     "react-map-gl": "^5.1.5",
@@ -40,7 +43,7 @@
     "simple-line-icons": "^2.4.1"
   },
   "devDependencies": {
-    "react-scripts": "^3.0.1"
+    "react-scripts": "^3.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

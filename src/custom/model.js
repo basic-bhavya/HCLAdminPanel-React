@@ -41,9 +41,9 @@ export default {
     //plots model
     plots: {
         selected: {
-            predicted: plots.towerone.predicted_Usage,
-            actual: plots.towerone.actual_Usage,
-            diff: plots.towerone.difference
+            // predicted: plots.towerone.predicted_Usage,
+            // actual: plots.towerone.actual_Usage,
+            // diff: plots.towerone.difference
         },
         allData: plots.dataArr,
         setData: action((state, payload) => {
