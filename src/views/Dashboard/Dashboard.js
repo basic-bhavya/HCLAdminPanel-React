@@ -45,14 +45,14 @@ const brandDanger = getStyle('--danger')
 
 // Card Chart 1
 const cardChartData1 = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  labels: plots.labels,
   // labels: plots.test,
   datasets: [
     {
       label: 'My First dataset',
       backgroundColor: brandPrimary,
       borderColor: 'rgba(255,255,255,.55)',
-      data: [65, 59, 84, 84, 51, 55, 40],
+      data: plots.plot2y,
     },
   ],
 };
@@ -94,7 +94,7 @@ const cardChartOpts1 = {
       borderWidth: 1,
     },
     point: {
-      radius: 4,
+      radius: 0,
       hitRadius: 10,
       hoverRadius: 4,
     },
@@ -111,7 +111,7 @@ const cardChartData2 = {
       label: 'Current Bandwidth: ',
       backgroundColor: brandInfo,
       borderColor: 'rgba(255,255,255,.55)',
-      data: plots.plot2y,
+      data: plots.plot1y,
     },
   ],
 };
@@ -647,7 +647,7 @@ class Dashboard extends Component {
           <Col>
             <Card>
               <CardHeader>
-                THE MAP
+                Area Map
               </CardHeader>
               <CardBody>
                 <div className="embed-responsive embed-responsive-16by9">
@@ -677,16 +677,16 @@ class Dashboard extends Component {
               <CardBody>
                 <Row>
                   <Col sm="5">
-                    <CardTitle className="mb-0">History</CardTitle>
+                    <CardTitle className="mb-0">Predicted Data</CardTitle>
                     <div className="small text-muted hello">December 2019</div>
                   </Col>
                   <Col sm="7" className="d-none d-sm-inline-block">
                     <CSVLink color="primary" className="float-right" data={csvData}><Button color="primary" className="float-right"><i className="icon-cloud-download"></i></Button></CSVLink>
                     <ButtonToolbar className="float-right" aria-label="Toolbar with button groups">
                       <ButtonGroup className="mr-3" aria-label="First group">
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected === 1}>Live</Button>
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected === 2}>Predicted</Button>
-                        <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected === 3}>Difference</Button>
+                        {/* <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(1)} active={this.state.radioSelected === 1}>Live</Button> */}
+                        {/* <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(2)} active={this.state.radioSelected === 2}>Predicted</Button> */}
+                        {/* <Button color="outline-secondary" onClick={() => this.onRadioBtnClick(3)} active={this.state.radioSelected === 3}>Difference</Button> */}
                       </ButtonGroup>
                     </ButtonToolbar>
                   </Col>
@@ -821,7 +821,7 @@ class Dashboard extends Component {
                 </div>
 
               </CardBody>
-              <CardFooter>
+              {/* <CardFooter>
                 <Row className="text-center">
                   <Col sm={12} md className="mb-sm-2 mb-0">
                     <div className="text-muted">Visits</div>
@@ -849,7 +849,7 @@ class Dashboard extends Component {
                     <Progress className="progress-xs mt-2" color="primary" value="40" />
                   </Col>
                 </Row>
-              </CardFooter>
+              </CardFooter> */}
             </Card>
           </Col>
         </Row>
@@ -898,7 +898,7 @@ class Dashboard extends Component {
 
         <Row>
           <Col>
-            <Card>
+            {/* <Card>
               <CardHeader>
                 Traffic {' & '} Sales
               </CardHeader>
@@ -1106,9 +1106,9 @@ class Dashboard extends Component {
                       </div>
                     </ul>
                   </Col>
-                </Row>
-                <br />
-                {/* <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
+                </Row> */}
+            <br />
+            {/* <Table hover responsive className="table-outline mb-0 d-none d-sm-table">
                   <thead className="thead-light">
                     <tr>
                       <th className="text-center"><i className="icon-people"></i></th>
@@ -1332,9 +1332,9 @@ class Dashboard extends Component {
                       </td>
                     </tr>
                   </tbody>
-                </Table> */}
+                </Table> 
               </CardBody>
-            </Card>
+            </Card>*/}
           </Col>
         </Row>
       </div >

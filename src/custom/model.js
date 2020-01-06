@@ -1,7 +1,6 @@
 import * as Towers from './data/TowerLocs';
 import * as plots from './data/plots';
 import { action, thunk } from 'easy-peasy';
-import { platform } from 'chart.js';
 
 export default {
     //thunk
@@ -20,29 +19,48 @@ export default {
         actions.setAll([t1Data, t2Data, t3Data, t4Data]);
     }),
 
+
     //towers model
     towers: {
         selected: Towers.TowerList[0],
         towerList: Towers.TowerList,
         towerCount: 4,
         setTower: action((state, payload) => {
-            state.selected = payload;
+            return {
+                selected: payload
+            }
         }),
     },
 
+    //Charts->Pie
     pieData: [],
-    setPie: action((state,payload)=>{
-        state.pieData = payload;
+    setPie: action((state, payload) => {
+        return {
+            ...state,
+            pieData: payload
+        }
     }),
-    data: [1,2,3,4,5],
+
+    //Chart=>Line
+    lineData: [],
+    setLine: action((state, payload) => {
+        return {
+            ...state,
+            lineData: payload
+        }
+    }),
+
+    //mainchart-handle
+    data: [1, 2, 3, 4, 5],
     selected: [plots.towerone.predicted_Usage, plots.towerone.actual_Usage, plots.towerone.difference],
     setAll: action((state, payload) => {
         state.data = [payload[0], payload[1], payload[2], payload[3]];
     }),
     setThis: action((state, payload) => {
         // state.accessThis = payload;
-        state.selected = [payload.predicted_Usage,payload.actual_Usage,payload.difference];
+        state.selected = [payload.predicted_Usage, payload.actual_Usage, payload.difference];
     }),
+
     //plots model
     plots: {
         selected: {
