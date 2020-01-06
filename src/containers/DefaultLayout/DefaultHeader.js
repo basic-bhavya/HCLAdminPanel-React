@@ -22,22 +22,22 @@ class DefaultHeader extends Component {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <AppNavbarBrand
+        {/* <AppNavbarBrand
           full={{ src: logo, width: 89, height: 25, alt: 'CoreUI Logo' }}
           minimized={{ src: sygnet, width: 30, height: 30, alt: 'CoreUI Logo' }}
-        />
+        /> */}
         <AppSidebarToggler className="d-md-down-none" display="lg" />
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
             <NavLink to="/dashboard" className="nav-link" >Dashboard</NavLink>
           </NavItem>
-          <NavItem className="px-3">
+          {/* <NavItem className="px-3">
             <Link to="/users" className="nav-link">Users</Link>
           </NavItem>
           <NavItem className="px-3">
             <NavLink to="#" className="nav-link">Settings</NavLink>
-          </NavItem>
+          </NavItem> */}
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem className="d-md-down-none">

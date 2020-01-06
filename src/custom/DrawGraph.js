@@ -104,6 +104,7 @@ const DrawGraph = ({ height }) => {
         {
           type: 'realtime',
           realtime: {
+            ttl: 1000000,
             duration: 10000,
             refresh: 1000,
             delay: 2000,

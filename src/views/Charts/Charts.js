@@ -12,8 +12,6 @@ const brandInfo = getStyle('--info')
 const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
 
-var pieT = [1, 2, 3, 4];
-
 var xhr = new XMLHttpRequest();
 
 const line = {
@@ -38,21 +36,6 @@ const line = {
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: [65, 59, 80, 81, 56, 55, 40],
-    },
-  ],
-};
-
-const bar = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [
-    {
-      label: 'My First dataset',
-      backgroundColor: 'rgba(255,99,132,0.2)',
-      borderColor: 'rgba(255,99,132,1)',
-      borderWidth: 1,
-      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-      hoverBorderColor: 'rgba(255,99,132,1)',
       data: [65, 59, 80, 81, 56, 55, 40],
     },
   ],
@@ -103,6 +86,21 @@ const mainChart = {
 var a = 0;
 
 const options = {
+  scales: {
+    yAxes: [
+      {
+        scaleLabel: {
+          display: true,
+          labelString: 'Consumption (TB/s)'
+        },
+        ticks: {
+          beginAtZero: true,
+          // maxTicksLimit: 5,
+          // stepSize: Math.ceil(120 / 5),
+          max: 100,
+        },
+      }],
+  },
   tooltips: {
     enabled: false,
     custom: CustomTooltips
@@ -126,7 +124,7 @@ export default function Charts() {
         // assume the response is an array of {x: timestamp, y: value} objects
         var rawData = JSON.parse(xhr.responseText);
         var pieTower = [rawData.actual_Usage.map((tower, i, towerArr) => {
-          return tower.data[index];
+          if (i < 4) return towerArr[i].data[index];
           // tower.data.map((value,index,dataArr) => {
           //   pieTower.push(dataArr[index]);
           // });
@@ -142,9 +140,41 @@ export default function Charts() {
     xhr.send();
   }
 
+  function dataDede() {
+    var t1 = new XMLHttpRequest();
+    var t2 = new XMLHttpRequest();
+    var t3 = new XMLHttpRequest();
+    var t4 = new XMLHttpRequest();
+
+    t1.open('GET', 'http://127.0.0.1:8000/tower/details?name=towerone')
+    t2.open('GET', 'http://127.0.0.1:8000/tower/details?name=towerone')
+    t3.open('GET', 'http://127.0.0.1:8000/tower/details?name=towerone')
+    t4.open('GET', 'http://127.0.0.1:8000/tower/details?name=towerone')
+  }
+
   // const fetchTest = useStoreActions(action => action.fetchTest);
   // const TowerList = useStoreState(state => state.towers.towerList);
   // const data = useStoreState(state => state.data);
+  const bar = {
+    labels: Towers.TowerList.map(tower => tower.title),
+    legends: {
+      display: false
+    },
+    datasets: [
+      {
+        label: 'Consumption:',
+        backgroundColor: 'rgba(255,99,132,0.2)',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: dataArr[0],
+      },
+    ],
+  };
+
+  console.log(dataArr[0]);
+  
 
   const pie = {
     labels: Towers.TowerList.map(tower => tower.title),
@@ -153,16 +183,16 @@ export default function Charts() {
       {
         data: dataArr[0],
         backgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#00AE55'
+          brandInfo,
+          brandSuccess,
+          brandDanger,
+          brandWarning
         ],
         hoverBackgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#00AE55'
+          brandInfo + '80',
+          brandSuccess + '80',
+          brandDanger + '80',
+          brandWarning + '80'
         ],
       }],
   };
@@ -184,7 +214,7 @@ export default function Charts() {
     onHover: function (e, item) {
       if (item.length) {
         drawPie(item[0]._index);
-        console.log(dataArr[0]);
+        // console.log(dataArr[0]);
       }
     },
     axisX: {
@@ -266,8 +296,7 @@ export default function Charts() {
   // render() {
   return (
     <div className="animated fadeIn">
-      <CardColumns className="cols-2">
-        <Card>
+      <Card>
           <CardHeader>
             Percentage utilization of hardware
               <div className="card-header-actions">
@@ -283,6 +312,7 @@ export default function Charts() {
             </div>
           </CardBody>
         </Card>
+      <CardColumns className="cols-2">
         <Card>
           <CardHeader>
             Bandwidth Distribution (Daily average)
@@ -309,7 +339,7 @@ export default function Charts() {
           </CardHeader>
           <CardBody>
             <div className="chart-wrapper">
-              <Bar data={bar} options={options} />
+              <Bar data={bar} options={options} height={290}/>
             </div>
           </CardBody>
         </Card>
