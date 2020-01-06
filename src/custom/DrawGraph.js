@@ -23,10 +23,10 @@ const DrawGraph = ({ height }) => {
 
   const getlink = () => {
     var link;
-    if(selTowerID===1) return 'http://127.0.0.1:8000/tower/details?name=towerone';
-    else if(selTowerID===2) return 'http://127.0.0.1:8000/tower/details?name=towertwo';
-    else if(selTowerID===3) return 'http://127.0.0.1:8000/tower/details?name=towerthree';
-    else if(selTowerID===4) return 'http://127.0.0.1:8000/tower/details?name=towerfour';
+    if (selTowerID === 1) return 'http://127.0.0.1:8000/tower/details?name=towerone';
+    else if (selTowerID === 2) return 'http://127.0.0.1:8000/tower/details?name=towertwo';
+    else if (selTowerID === 3) return 'http://127.0.0.1:8000/tower/details?name=towerthree';
+    else if (selTowerID === 4) return 'http://127.0.0.1:8000/tower/details?name=towerfour';
 
   }
 
@@ -73,7 +73,7 @@ const DrawGraph = ({ height }) => {
     ],
   }
 
-  var a=0;
+  var a = 0;
 
   var optns = {
     responsive: true,
@@ -91,7 +91,7 @@ const DrawGraph = ({ height }) => {
     },
     maintainAspectRatio: false,
     legend: {
-      display: false,
+      display: true,
     },
     title: {
       display: true,
@@ -104,9 +104,9 @@ const DrawGraph = ({ height }) => {
         {
           type: 'realtime',
           realtime: {
-            duration: 100000,
-            refresh: 10000,
-            delay:10000,
+            duration: 10000,
+            refresh: 1000,
+            delay: 2000,
             onRefresh: function (chart) {
               // chart.data.datasets.forEach(function (dataset) {
               //   dataset.data.push({
@@ -134,12 +134,10 @@ const DrawGraph = ({ height }) => {
                     x: Date.now(),
                     y: rawData.difference[a]
                   }
-                  
-                  a+=1;
-                  if(a==5) console.log(rawData);
-                  
 
-                  if(a >= rawData.predicted_Usage.length) a=0;
+                  a += 1;
+
+                  if (a >= rawData.predicted_Usage.length) a = 0;
                   // append the new data array to the existing chart data
                   chart.data.datasets[0].data.push(data1);
                   chart.data.datasets[1].data.push(data2);
@@ -194,10 +192,10 @@ const DrawGraph = ({ height }) => {
             labelString: 'Bandwidth (TB/s)'
           },
           ticks: {
-            // beginAtZero: true,
+            beginAtZero: true,
             // maxTicksLimit: 5,
             // stepSize: Math.ceil(120 / 5),
-            max: 120,
+            // max: 100,
           },
         }],
     },
@@ -209,6 +207,26 @@ const DrawGraph = ({ height }) => {
         hoverBorderWidth: 3,
       },
     },
+    pan: {
+      enabled: true,    // Enable panning
+      mode: 'x',        // Allow panning in the x direction
+      rangeMin: {
+        x: null       // Min value of the delay option
+      },
+      rangeMax: {
+        x: null       // Max value of the delay option
+      }
+    },
+    zoom: {
+      enabled: true,    // Enable zooming
+      mode: 'x',        // Allow zooming in the x direction
+      rangeMin: {
+        x: null       // Min value of the duration option
+      },
+      rangeMax: {
+        x: null       // Max value of the duration option
+      }
+    }
   };
 
   // setData(plots[selTowerID - 1]);

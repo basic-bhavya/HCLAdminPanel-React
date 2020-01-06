@@ -19,6 +19,7 @@
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
     "chartjs-plugin-streaming": "^1.8.0",
+    "chartjs-plugin-zoom": "^0.7.5",
     "classnames": "^2.2.6",
     "core-js": "^3.1.4",
     "easy-peasy": "^3.2.6",

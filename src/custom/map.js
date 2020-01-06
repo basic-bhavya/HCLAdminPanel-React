@@ -45,9 +45,9 @@ const Map = () => {
       <div>
         <InfoWindow
           position={{ lat: selTower.coords.lat + 0.006, lng: selTower.coords.lng }}
-          onCloseClick={() =>
-            setTower(null)
-          }
+          // onCloseClick={() =>
+          //   setTower(null)
+          // }
         >
           <div>
             {selTower.title}

@@ -1,8 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Bar, Doughnut, Line, Pie, Polar, Radar } from 'react-chartjs-2';
 import { Card, CardBody, CardColumns, CardHeader } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState, useStoreActions } from 'easy-peasy';
+import * as plots from '../../custom/data/plots';
+import * as Towers from '../../custom/data/TowerLocs';
+import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
+const brandPrimary = getStyle('--primary')
+const brandSuccess = getStyle('--success')
+const brandInfo = getStyle('--info')
+const brandWarning = getStyle('--warning')
+const brandDanger = getStyle('--danger')
+
+var pieT = [1, 2, 3, 4];
+
+var xhr = new XMLHttpRequest();
 
 const line = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -46,75 +58,49 @@ const bar = {
   ],
 };
 
-const doughnut = {
-  labels: [
-    'Red',
-    'Green',
-    'Yellow',
-  ],
+const mainChart = {
+  // labels: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+  // labels: ['1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM','12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM','12AM'],
+  labels: plots.labels,
   datasets: [
     {
-      data: [300, 50, 100],
-      backgroundColor: [
-        '#FF6384',
-        '#36A2EB',
-        '#FFCE56',
-      ],
-      hoverBackgroundColor: [
-        '#FF6384',
-        '#36A2EB',
-        '#FFCE56',
-      ],
-    }],
-};
-
-const radar = {
-  labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding', 'Cycling', 'Running'],
-  datasets: [
-    {
-      label: 'My First dataset',
-      backgroundColor: 'rgba(179,181,198,0.2)',
-      borderColor: 'rgba(179,181,198,1)',
-      pointBackgroundColor: 'rgba(179,181,198,1)',
-      pointBorderColor: '#fff',
+      label: 'Tower A',
+      backgroundColor: hexToRgba(brandInfo, 10),
+      borderColor: brandInfo,
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(179,181,198,1)',
-      data: [65, 59, 90, 81, 56, 55, 40],
+      borderWidth: 3,
+      data: plots.plot1y,
     },
     {
-      label: 'My Second dataset',
-      backgroundColor: 'rgba(255,99,132,0.2)',
-      borderColor: 'rgba(255,99,132,1)',
-      pointBackgroundColor: 'rgba(255,99,132,1)',
-      pointBorderColor: '#fff',
+      label: 'Tower B',
+      backgroundColor: 'transparent',
+      borderColor: brandSuccess,
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(255,99,132,1)',
-      data: [28, 48, 40, 19, 96, 27, 100],
+      borderWidth: 3,
+      data: plots.plot2y,
+    },
+    {
+      label: 'Tower C',
+      backgroundColor: 'transparent',
+      borderColor: brandDanger,
+      pointHoverBackgroundColor: '#fff',
+      borderWidth: 3,
+      // borderDash: [8, 5],
+      data: plots.plot3y,
+    },
+    {
+      label: 'Tower D',
+      backgroundColor: 'transparent',
+      borderColor: brandWarning,
+      pointHoverBackgroundColor: '#fff',
+      borderWidth: 3,
+      // borderDash: [8, 5],
+      data: plots.plot4y,
     },
   ],
 };
 
-const pie = {
-  labels: [
-    'Red',
-    'Green',
-    'Yellow',
-  ],
-  datasets: [
-    {
-      data: [300, 50, 100],
-      backgroundColor: [
-        '#FF6384',
-        '#36A2EB',
-        '#FFCE56',
-      ],
-      hoverBackgroundColor: [
-        '#FF6384',
-        '#36A2EB',
-        '#FFCE56',
-      ],
-    }],
-};
+var a = 0;
 
 const options = {
   tooltips: {
@@ -124,138 +110,213 @@ const options = {
   maintainAspectRatio: false
 }
 
-// class Charts extends Component {
-export default function Charts(){
+// function updateChart(pieChart){
+//   chart.data.datasets[0].data = pieT;
+// }
 
-  const TowerList = useStoreState(state=>state.towers.towerList);
+export default function Charts() {
 
-const polar = {
-  datasets: [
-    {
-      data: [
-        11,
-        16,
-        7,
-        33,
-        // 14,
-      ],
-      backgroundColor: [
-        '#FF6384',
-        '#4BC0C0',
-        '#FFCE56',
-        '#E7E9ED',
-        // '#36A2EB',
-      ],
-      label: 'My dataset' // for legend
-    }],
-  // labels: [
-  //   'Red',
-  //   'Green',
-  //   'Yellow',
-  //   'Grey',
-  //   'Blue',
-  // ],
-  labels: TowerList.map(tower=>tower.title),
-};
+  const dataArr = useStoreState(state => state.pieData);
+  const setPie = useStoreActions(action => action.setPie);
+
+  function drawPie(index) {
+    xhr.open('GET', 'http://127.0.0.1:8000/tower/bhavya');
+    xhr.onload = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // assume the response is an array of {x: timestamp, y: value} objects
+        var rawData = JSON.parse(xhr.responseText);
+        var pieTower = [rawData.actual_Usage.map((tower, i, towerArr) => {
+          return tower.data[index];
+          // tower.data.map((value,index,dataArr) => {
+          //   pieTower.push(dataArr[index]);
+          // });
+          // totsum += sum;
+          // return tower.actual_Usage[index].toPrecision(5)
+        })]
+
+        setPie(pieTower);
+
+      }
+
+    }
+    xhr.send();
+  }
+
+  // const fetchTest = useStoreActions(action => action.fetchTest);
+  // const TowerList = useStoreState(state => state.towers.towerList);
+  // const data = useStoreState(state => state.data);
+
+  const pie = {
+    labels: Towers.TowerList.map(tower => tower.title),
+
+    datasets: [
+      {
+        data: dataArr[0],
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#00AE55'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#00AE55'
+        ],
+      }],
+  };
+
+  const mainChartOpts = {
+    events: ['click'],
+    tooltips: {
+      enabled: false,
+      custom: CustomTooltips,
+      intersect: true,
+      mode: 'index',
+      position: 'nearest',
+      callbacks: {
+        labelColor: function (tooltipItem, chart) {
+          return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor }
+        }
+      }
+    },
+    onHover: function (e, item) {
+      if (item.length) {
+        drawPie(item[0]._index);
+        console.log(dataArr[0]);
+      }
+    },
+    axisX: {
+      interval: 1000
+    },
+    maintainAspectRatio: false,
+    legend: {
+      display: true,
+    },
+    scales: {
+      xAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: 'Time'
+          },
+          gridLines: {
+            drawOnChartArea: false,
+          },
+          ticks: {
+
+            callback: function (value, index, values) {
+              if (value < 1200) {
+                var front = value.toString().substring(0, 2);
+                var end = "AM";
+              } else {
+                var front = ((value / 100).toPrecision(2) - 12).toString().substring(0, 2);
+                var end = "PM";
+              }
+              var back = value.toString().substring(2, 4);
+              return front + ":" + back + end;
+            }
+          }
+        }],
+      yAxes: [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: 'Bandwidth (TB/s)'
+          },
+          // {
+          // ticks: {
+          //   beginAtZero: true,
+          //   maxTicksLimit: 5,
+          //   stepSize: Math.ceil(120 / 5),
+          //   max: 120,
+          // },
+        }],
+    },
+    elements: {
+      point: {
+        radius: 0,
+        hitRadius: 10,
+        hoverRadius: 4,
+        hoverBorderWidth: 3,
+      },
+    },
+  };
+
+  var PieChart = <Pie data={pie} options={{
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          var dataset = data.datasets[tooltipItem.datasetIndex];
+          var meta = dataset._meta[Object.keys(dataset._meta)[0]];
+          var total = meta.total;
+          var currentValue = dataset.data[tooltipItem.index];
+          var percentage = parseFloat((currentValue / total * 100).toFixed(1));
+          return currentValue + ' TB/s' + ' (' + percentage + '%)';
+        },
+        title: function (tooltipItem, data) {
+          return data.labels[tooltipItem[0].index];
+        }
+      }
+    }
+  }
+  } />
 
   // render() {
-    return (
-      <div className="animated fadeIn">
-        <CardColumns className="cols-2">
-          <Card>
-            <CardHeader>
-              Line Chart
+  return (
+    <div className="animated fadeIn">
+      <CardColumns className="cols-2">
+        <Card>
+          <CardHeader>
+            Percentage utilization of hardware
               <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Line data={line} options={options} />
-              </div>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              Bar Chart
+              <a href="http://www.chartjs.org" className="card-header-action">
+                <small className="text-muted">docs</small>
+              </a>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <div className="chart-wrapper">
+              {/* <Bar data={bar} options={options} /> */}
+              <Line data={mainChart} options={mainChartOpts} height={300} />
+            </div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader>
+            Bandwidth Distribution (Daily average)
               <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Bar data={bar} options={options} />
-              </div>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              Doughnut Chart
+              <a href="http://www.chartjs.org" className="card-header-action">
+                <small className="text-muted">docs</small>
+              </a>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <div className="chart-wrapper">
+              {PieChart}
+            </div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader>
+            Bar Chart
               <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Doughnut data={doughnut} />
-              </div>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              Radar Chart
-              <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Radar data={radar} />
-              </div>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              Pie Chart
-              <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Pie data={pie} />
-              </div>
-            </CardBody>
-          </Card>
-          <Card>
-            <CardHeader>
-              Polar Area Chart
-              <div className="card-header-actions">
-                <a href="http://www.chartjs.org" className="card-header-action">
-                  <small className="text-muted">docs</small>
-                </a>
-              </div>
-            </CardHeader>
-            <CardBody>
-              <div className="chart-wrapper">
-                <Polar data={polar} options={options} />
-              </div>
-            </CardBody>
-          </Card>
-        </CardColumns>
-      </div>
-    );
-  }
+              <a href="http://www.chartjs.org" className="card-header-action">
+                <small className="text-muted">docs</small>
+              </a>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <div className="chart-wrapper">
+              <Bar data={bar} options={options} />
+            </div>
+          </CardBody>
+        </Card>
+      </CardColumns>
+    </div>
+  );
+}
 // }
 
 // export default Charts;

@@ -1,6 +1,7 @@
 import * as Towers from './data/TowerLocs';
 import * as plots from './data/plots';
 import { action, thunk } from 'easy-peasy';
+import { platform } from 'chart.js';
 
 export default {
     //thunk
@@ -29,7 +30,11 @@ export default {
         }),
     },
 
-    data: [],
+    pieData: [],
+    setPie: action((state,payload)=>{
+        state.pieData = payload;
+    }),
+    data: [1,2,3,4,5],
     selected: [plots.towerone.predicted_Usage, plots.towerone.actual_Usage, plots.towerone.difference],
     setAll: action((state, payload) => {
         state.data = [payload[0], payload[1], payload[2], payload[3]];

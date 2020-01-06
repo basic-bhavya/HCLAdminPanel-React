@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
 // import fullMap from '../../GMap';
-import DrawGraph from '../../../custom/DrawGraph';
 
 class Breadcrumbs extends Component {
   render() {
